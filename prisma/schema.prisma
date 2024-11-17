@@ -1,0 +1,204 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User Profile
+model User {
+  id            String    @id @default(cuid())
+  clerkId       String    @unique
+  email         String    @unique
+  firstName     String?
+  lastName      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Profile Information
+  headline      String?
+  bio           String?
+  location      String?
+  website       String?
+  
+  // Career Information
+  currentTitle  String?
+  currentCompany String?
+  yearsOfExperience Int?
+  
+  // Relationships
+  resumes       Resume[]
+  jobApplications JobApplication[]
+  careerPath    CareerPath?
+  skills        UserSkill[]
+  notifications Notification[]
+
+  @@index([clerkId])
+}
+
+// Resume Management
+model Resume {
+  id          String    @id @default(cuid())
+  userId      String
+  name        String
+  content     Json
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  isTemplate  Boolean   @default(false)
+  
+  // Analysis Results
+  score       Float?
+  feedback    Json?
+  
+  // Relationships
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  versions    ResumeVersion[]
+
+  @@index([userId])
+}
+
+model ResumeVersion {
+  id          String    @id @default(cuid())
+  resumeId    String
+  version     Int
+  content     Json
+  createdAt   DateTime  @default(now())
+  
+  // Relationships
+  resume      Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+
+  @@index([resumeId])
+}
+
+// Job Applications
+model JobApplication {
+  id          String    @id @default(cuid())
+  userId      String
+  company     String
+  position    String
+  status      JobStatus
+  appliedDate DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Job Details
+  description String?
+  salary      String?
+  location    String?
+  jobType     String?
+  url         String?
+  
+  // Application Details
+  resumeUsed  String?
+  notes       String?
+  
+  // Relationships
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activities  JobActivity[]
+
+  @@index([userId])
+}
+
+model JobActivity {
+  id              String    @id @default(cuid())
+  jobApplicationId String
+  type            ActivityType
+  date            DateTime  @default(now())
+  notes           String?
+  
+  // Relationships
+  jobApplication  JobApplication @relation(fields: [jobApplicationId], references: [id], onDelete: Cascade)
+
+  @@index([jobApplicationId])
+}
+
+// Career Path
+model CareerPath {
+  id          String    @id @default(cuid())
+  userId      String    @unique
+  currentLevel String
+  targetLevel String
+  timeline    Json
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// Skills Management
+model UserSkill {
+  id          String    @id @default(cuid())
+  userId      String
+  name        String
+  level       SkillLevel
+  verified    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@unique([userId, name])
+}
+
+// Notifications
+model Notification {
+  id          String    @id @default(cuid())
+  userId      String
+  type        NotificationType
+  title       String
+  message     String
+  read        Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  
+  // Relationships
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// Enums
+enum JobStatus {
+  SAVED
+  APPLIED
+  INTERVIEWING
+  OFFERED
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum ActivityType {
+  NOTE
+  INTERVIEW_SCHEDULED
+  INTERVIEW_COMPLETED
+  OFFER_RECEIVED
+  FOLLOW_UP_SENT
+  REJECTED
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+enum NotificationType {
+  JOB_UPDATE
+  INTERVIEW_REMINDER
+  RESUME_FEEDBACK
+  CAREER_MILESTONE
+  SYSTEM
+}

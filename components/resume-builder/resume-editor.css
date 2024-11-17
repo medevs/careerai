@@ -1,0 +1,28 @@
+.resume-tabs [data-state='active'] {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+.resume-tabs [role="tab"] {
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  background-color: hsl(var(--muted));
+}
+
+.resume-tabs [role="tab"]:hover {
+  background-color: hsl(var(--muted-foreground/0.1));
+}
+
+.resume-tabs [role="tablist"] {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.resume-tabs [role="tabpanel"] {
+  margin-top: 0;
+  border-radius: 12px;
+  background-color: hsl(var(--card));
+  padding: 1.5rem;
+  border: 1px solid hsl(var(--border));
+}
