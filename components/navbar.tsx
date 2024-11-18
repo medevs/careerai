@@ -49,7 +49,7 @@ export default function Navbar() {
           <ThemeToggle />
           
           <SignedIn>
-            <Button variant="outline" size="sm" asChild className="animate-in fade-in-0 duration-500">
+            <Button variant="outline" size="sm" asChild>
               <Link href="/dashboard">Dashboard</Link>
             </Button>
             <UserButton afterSignOutUrl="/" />
@@ -86,7 +86,7 @@ export default function Navbar() {
                   </Link>
                 ))}
                 <SignedIn>
-                  <Button variant="outline" size="sm" asChild className="w-full animate-in fade-in-0 duration-500">
+                  <Button variant="outline" size="sm" asChild className="w-full">
                     <Link href="/dashboard">Dashboard</Link>
                   </Button>
                   <div className="flex justify-center">
