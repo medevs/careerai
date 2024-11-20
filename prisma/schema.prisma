@@ -20,13 +20,6 @@ model User {
   email         String    @unique
   firstName     String?
   lastName      String?
-  imageUrl      String?
-  
-  // Onboarding fields
-  hasCompletedOnboarding Boolean @default(false)
-  interestedJobTitles   String[]
-  resumeUrl             String?
-
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   
@@ -36,24 +29,16 @@ model User {
   location      String?
   website       String?
   
-  // Social Links
-  github        String?
-  linkedin      String?
-  twitter       String?
-  
   // Career Information
+  currentTitle  String?
+  currentCompany String?
   yearsOfExperience Int?
-  currentRole    String?
-  education      Education[]
-  experience     Experience[]
-  projects       Project[]
-  skills         UserSkill[]
-  certifications Certification[]
-  careerPath     CareerPath?
   
-  // Other Relations
+  // Relationships
   resumes       Resume[]
   jobApplications JobApplication[]
+  careerPath    CareerPath?
+  skills        UserSkill[]
   notifications Notification[]
 
   @@index([clerkId])
@@ -216,62 +201,4 @@ enum NotificationType {
   RESUME_FEEDBACK
   CAREER_MILESTONE
   SYSTEM
-}
-
-// Education
-model Education {
-  id          String    @id @default(cuid())
-  userId      String
-  school      String
-  degree      String
-  field       String
-  startDate   DateTime
-  endDate     DateTime
-  gpa         Float
-  description String?
-  
-  // Relationships
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-// Experience
-model Experience {
-  id          String    @id @default(cuid())
-  userId      String
-  company     String
-  role        String
-  startDate   DateTime
-  endDate     DateTime
-  description String?
-  
-  // Relationships
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-// Project
-model Project {
-  id          String    @id @default(cuid())
-  userId      String
-  name        String
-  description String
-  startDate   DateTime
-  endDate     DateTime
-  url         String?
-  
-  // Relationships
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-// Certification
-model Certification {
-  id          String    @id @default(cuid())
-  userId      String
-  name        String
-  issuingOrg  String
-  dateEarned  DateTime
-  expiration  DateTime?
-  description String?
-  
-  // Relationships
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
