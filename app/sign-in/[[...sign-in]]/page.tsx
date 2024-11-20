@@ -1,12 +1,31 @@
-import { SignIn } from '@clerk/nextjs'
+'use client';
 
-export default function Page() {
+import type { FC } from 'react';
+import { useEffect } from 'react';
+import { SignIn, useSignIn } from '@clerk/nextjs';
+import { useAuth } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
+
+const SignInPage: FC = () => {
+  const { isLoaded } = useSignIn();
+  const { isSignedIn } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      router.push('/dashboard');
+    }
+  }, [isLoaded, isSignedIn, router]);
+
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <SignIn />
+    <div className="flex min-h-screen items-center justify-center">
+      <SignIn 
+        signUpUrl="/sign-up" 
+        redirectUrl="/dashboard" 
+        afterSignInUrl="/dashboard"
+      />
     </div>
-  )
-}
+  );
+};
 
-// Mark this page as dynamic
-export const dynamic = "force-dynamic";
+export default SignInPage;
